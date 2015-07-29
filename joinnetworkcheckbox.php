@@ -20,7 +20,6 @@ function joinnetworkcheckbox_civicrm_post( $op, $objectName, $objectId, &$object
       'entity_id' => $cid,
       'return.custom_46' => 1,
     );
-    //Re-reading this code today, I realize this'd be better with a 'getvalue', not a 'getsingle', but oh well.
     $result = civicrm_api('CustomValue', 'getsingle', $params);
 
     //if so, then:
