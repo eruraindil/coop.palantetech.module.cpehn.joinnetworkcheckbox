@@ -8,7 +8,7 @@ require_once 'joinnetworkcheckbox.civix.php';
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_post
  */
 
-//We check to see if "Join the Network" is checked.  If so, let's add them to the network group and send a welcome message (regardless of whether they're already a member or not).
+//We check to see if "Join the Network" is checked.  If so, let's add them to the newsletter groups
 function joinnetworkcheckbox_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   if($op == 'create' && ($objectName == 'Contribution' || $objectName == 'Participant') ) {
     $cid = $objectRef->contact_id;
@@ -18,18 +18,27 @@ function joinnetworkcheckbox_civicrm_post( $op, $objectName, $objectId, &$object
       'version' => 3,
       'sequential' => 1,
       'entity_id' => $cid,
-      'return.custom_46' => 1,
+      'return.custom_107' => 1,
     );
     $result = civicrm_api('CustomValue', 'getsingle', $params);
 
     //if so, then:
     if ($result[0][0] == 1) {
-      //add them to the CPEHN Network group (group_id 5).
+      //add them to the Breathe Newsletter group (group_id 39).
       $params = array(
         'version' => 3,
         'sequential' => 1,
         'contact_id' => $cid,
-        'group_id' => 5,
+        'group_id' => 39,
+      );
+      $result = civicrm_api('GroupContact', 'create', $params);
+      
+      //add them to the Health Alerts group (group_id 37).
+      $params = array(
+        'version' => 3,
+        'sequential' => 1,
+        'contact_id' => $cid,
+        'group_id' => 37,
       );
       $result = civicrm_api('GroupContact', 'create', $params);
 
@@ -38,12 +47,12 @@ function joinnetworkcheckbox_civicrm_post( $op, $objectName, $objectId, &$object
         'version' => 3,   
         'sequential' => 1,
         'entity_id' => $cid,
-        'custom_46' => 0,
+        'custom_107' => 0,
       );
       $result = civicrm_api('CustomValue', 'create', $params);
 
       //and finally, send a welcome message   
-      joinnetworkcheckbox_send_welcome_message($cid);
+//      joinnetworkcheckbox_send_welcome_message($cid);
     }
   }
 }
